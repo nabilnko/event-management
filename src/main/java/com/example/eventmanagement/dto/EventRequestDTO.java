@@ -1,27 +1,38 @@
 package com.example.eventmanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class EventRequestDTO {//for data transfer only,user provides,user cannot fake an id or manipulate timestamps
+public class EventRequestDTO {
 
+    @Schema(description = "Title of the event", example = "Spring Boot Workshop")
     @NotBlank(message = "Event title is required")
     private String title;
 
+    @Schema(description = "Detailed description of the event", example = "Learn Spring Boot from scratch")
     @NotBlank(message = "Description is required")
     private String description;
 
+    @Schema(description = "Date of the event", example = "2025-12-20", type = "string", format = "date")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Event date is required")
     private LocalDate eventDate;
 
+    @Schema(description = "Event start time", example = "10:00:00", type = "string", format = "time")
+    @JsonFormat(pattern = "HH:mm:ss")
     @NotNull(message = "Start time is required")
     private LocalTime startTime;
 
+    @Schema(description = "Event end time", example = "14:00:00", type = "string", format = "time")
+    @JsonFormat(pattern = "HH:mm:ss")
     @NotNull(message = "End time is required")
     private LocalTime endTime;
 
+    @Schema(description = "Location of the event", example = "Dhaka, Bangladesh")
     @NotBlank(message = "Location is required")
     private String location;
 

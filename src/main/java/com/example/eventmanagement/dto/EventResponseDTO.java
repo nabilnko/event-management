@@ -1,21 +1,43 @@
 package com.example.eventmanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class EventResponseDTO {//used for sending data to user
+public class EventResponseDTO {
 
-    private Long id;//system
+    @Schema(description = "Unique identifier of the event", example = "1")
+    private Long id;
+
+    @Schema(description = "Title of the event", example = "Spring Boot Workshop")
     private String title;
+
+    @Schema(description = "Detailed description of the event", example = "Learn Spring Boot from scratch")
     private String description;
+
+    @Schema(description = "Date of the event", example = "2025-12-20", type = "string", format = "date")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate eventDate;
+
+    @Schema(description = "Event start time", example = "10:00:00", type = "string", format = "time")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
+
+    @Schema(description = "Event end time", example = "14:00:00", type = "string", format = "time")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
+
+    @Schema(description = "Location of the event", example = "Dhaka, Bangladesh")
     private String location;
-    private LocalDateTime createdAt;//system
-    private LocalDateTime updatedAt;//system
-//user sends 6 fields ,system returns 9 fields, 3 from response which are system generated and not visible to user
+
+    @Schema(description = "Timestamp when the event was created", example = "2025-11-28T13:03:00.123456")
+    private LocalDateTime createdAt;
+
+    @Schema(description = "Timestamp when the event was last updated", example = "2025-11-28T13:03:00.123456")
+    private LocalDateTime updatedAt;
+
     public EventResponseDTO() {
     }
 
