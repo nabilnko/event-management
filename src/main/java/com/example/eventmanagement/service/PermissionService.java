@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PermissionService {
@@ -33,7 +34,7 @@ public class PermissionService {
     public PermissionDTO createPermission(PermissionDTO permissionDTO, HttpServletRequest request) {
         // Check if permission already exists
         if (permissionRepository.existsByPermission(permissionDTO.getPermission())) {
-            throw new RuntimeException("Permission '" + permissionDTO.getPermission() + "' already exists");
+            throw new IllegalArgumentException("Permission '" + permissionDTO.getPermission() + "' already exists");
         }
 
         // Convert DTO to Entity
@@ -58,7 +59,7 @@ public class PermissionService {
     // Get permission by ID
     public PermissionDTO getPermissionById(Long id) {
         Permission permission = permissionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + id));
 
         return permissionMapper.toDTO(permission);
     }
@@ -66,7 +67,7 @@ public class PermissionService {
     // Get permission by name
     public PermissionDTO getPermissionByName(String permissionName) {
         Permission permission = permissionRepository.findByPermission(permissionName)
-                .orElseThrow(() -> new RuntimeException("Permission not found with name: " + permissionName));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with name: " + permissionName));
 
         return permissionMapper.toDTO(permission);
     }
@@ -76,12 +77,12 @@ public class PermissionService {
     public PermissionDTO updatePermission(Long id, PermissionDTO permissionDTO, HttpServletRequest request) {
         // Find existing permission
         Permission existingPermission = permissionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + id));
 
         // Check if new name already exists (and it's not the current permission)
         if (!existingPermission.getPermission().equals(permissionDTO.getPermission()) &&
                 permissionRepository.existsByPermission(permissionDTO.getPermission())) {
-            throw new RuntimeException("Permission '" + permissionDTO.getPermission() + "' already exists");
+            throw new IllegalArgumentException("Permission '" + permissionDTO.getPermission() + "' already exists");
         }
 
         // Update entity from DTO
@@ -102,7 +103,7 @@ public class PermissionService {
     public void deletePermission(Long id, HttpServletRequest request) {
         // Check if permission exists
         Permission permission = permissionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Permission not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + id));
 
         // Delete permission
         permissionRepository.delete(permission);

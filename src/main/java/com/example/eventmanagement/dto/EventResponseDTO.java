@@ -1,10 +1,12 @@
 package com.example.eventmanagement.dto;
 
+import com.example.eventmanagement.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Set;
 
 public class EventResponseDTO {
 
@@ -32,12 +34,25 @@ public class EventResponseDTO {
     @Schema(description = "Location of the event", example = "Dhaka, Bangladesh")
     private String location;
 
+    @Schema(description = "Event type: PUBLIC or PRIVATE", example = "PUBLIC")
+    private EventType eventType;
+
+    @Schema(description = "Event organizer information")
+    private UserBasicDTO organizer;
+
+    @Schema(description = "Number of invited users (for PRIVATE events)", example = "5")
+    private Integer invitedUsersCount;
+
+    @Schema(description = "List of invited users (only visible to organizer for PRIVATE events)")
+    private Set<UserBasicDTO> invitedUsers;
+
     @Schema(description = "Timestamp when the event was created", example = "2025-11-28T13:03:00.123456")
     private LocalDateTime createdAt;
 
     @Schema(description = "Timestamp when the event was last updated", example = "2025-11-28T13:03:00.123456")
     private LocalDateTime updatedAt;
 
+    // Constructors
     public EventResponseDTO() {
     }
 
@@ -55,6 +70,7 @@ public class EventResponseDTO {
         this.updatedAt = updatedAt;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -109,6 +125,38 @@ public class EventResponseDTO {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public UserBasicDTO getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(UserBasicDTO organizer) {
+        this.organizer = organizer;
+    }
+
+    public Integer getInvitedUsersCount() {
+        return invitedUsersCount;
+    }
+
+    public void setInvitedUsersCount(Integer invitedUsersCount) {
+        this.invitedUsersCount = invitedUsersCount;
+    }
+
+    public Set<UserBasicDTO> getInvitedUsers() {
+        return invitedUsers;
+    }
+
+    public void setInvitedUsers(Set<UserBasicDTO> invitedUsers) {
+        this.invitedUsers = invitedUsers;
     }
 
     public LocalDateTime getCreatedAt() {

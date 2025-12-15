@@ -43,3 +43,8 @@ Thumbs.db
 *.tmp
 *.swp
 *~
+
+
+# Add logs to .gitignore
+echo "logs/" >> .gitignore
+echo "*.log" >> .gitignore

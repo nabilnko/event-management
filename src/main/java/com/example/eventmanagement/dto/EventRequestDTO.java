@@ -1,11 +1,13 @@
 package com.example.eventmanagement.dto;
 
+import com.example.eventmanagement.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 public class EventRequestDTO {
 
@@ -36,6 +38,14 @@ public class EventRequestDTO {
     @NotBlank(message = "Location is required")
     private String location;
 
+    @Schema(description = "Event type: PUBLIC or PRIVATE", example = "PUBLIC", allowableValues = {"PUBLIC", "PRIVATE"})
+    @NotNull(message = "Event type is required")
+    private EventType eventType;
+
+    @Schema(description = "List of invited user IDs (required only for PRIVATE events)", example = "[1, 2, 3]")
+    private Set<Long> invitedUserIds;
+
+    // Constructors
     public EventRequestDTO() {
     }
 
@@ -49,6 +59,20 @@ public class EventRequestDTO {
         this.location = location;
     }
 
+    public EventRequestDTO(String title, String description, LocalDate eventDate,
+                           LocalTime startTime, LocalTime endTime, String location,
+                           EventType eventType, Set<Long> invitedUserIds) {
+        this.title = title;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location;
+        this.eventType = eventType;
+        this.invitedUserIds = invitedUserIds;
+    }
+
+    // Getters and Setters
     public String getTitle() {
         return title;
     }
@@ -95,5 +119,21 @@ public class EventRequestDTO {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public Set<Long> getInvitedUserIds() {
+        return invitedUserIds;
+    }
+
+    public void setInvitedUserIds(Set<Long> invitedUserIds) {
+        this.invitedUserIds = invitedUserIds;
     }
 }

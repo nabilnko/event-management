@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class RoleService {
     public RoleDTO createRole(RoleDTO roleDTO, HttpServletRequest request) {
         // Check if role name already exists
         if (roleRepository.existsByName(roleDTO.getName())) {
-            throw new RuntimeException("Role with name '" + roleDTO.getName() + "' already exists");
+            throw new IllegalArgumentException("Role with name '" + roleDTO.getName() + "' already exists");
         }
 
         // Convert DTO to Entity
@@ -79,7 +80,7 @@ public class RoleService {
     // Get role by ID (without permissions)
     public RoleDTO getRoleById(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + id));
 
         return roleMapper.toDTO(role);
     }
@@ -87,7 +88,7 @@ public class RoleService {
     // Get role by ID (with permissions)
     public RoleDTO getRoleByIdWithPermissions(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + id));
 
         return roleMapper.toDTOWithPermissions(role);
     }
@@ -95,7 +96,7 @@ public class RoleService {
     // Get role by name
     public RoleDTO getRoleByName(String name) {
         Role role = roleRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Role not found with name: " + name));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with name: " + name));
 
         return roleMapper.toDTO(role);
     }
@@ -105,12 +106,12 @@ public class RoleService {
     public RoleDTO updateRole(Long id, RoleDTO roleDTO, HttpServletRequest request) {
         // Find existing role
         Role existingRole = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + id));
 
         // Check if new name already exists (and it's not the current role)
         if (!existingRole.getName().equals(roleDTO.getName()) &&
                 roleRepository.existsByName(roleDTO.getName())) {
-            throw new RuntimeException("Role with name '" + roleDTO.getName() + "' already exists");
+            throw new IllegalArgumentException("Role with name '" + roleDTO.getName() + "' already exists");
         }
 
         // Update entity from DTO
@@ -131,11 +132,11 @@ public class RoleService {
     public void deleteRole(Long id, HttpServletRequest request) {
         // Check if role exists
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + id));
 
         // Check if role has users (prevent deletion if users exist)
         if (!role.getUsers().isEmpty()) {
-            throw new RuntimeException("Cannot delete role. " + role.getUsers().size() + " user(s) are assigned to this role");
+            throw new IllegalStateException("Cannot delete role. " + role.getUsers().size() + " user(s) are assigned to this role");
         }
 
         // Delete role
@@ -152,13 +153,13 @@ public class RoleService {
     public RoleDTO assignPermissionsToRole(RolePermissionDTO rolePermissionDTO, HttpServletRequest request) {
         // Find role
         Role role = roleRepository.findById(rolePermissionDTO.getRoleId())
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + rolePermissionDTO.getRoleId()));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + rolePermissionDTO.getRoleId()));
 
         // Find all permissions by IDs
         Set<Permission> permissions = new HashSet<>();
         for (Long permissionId : rolePermissionDTO.getPermissionIds()) {
             Permission permission = permissionRepository.findById(permissionId)
-                    .orElseThrow(() -> new RuntimeException("Permission not found with id: " + permissionId));
+                    .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + permissionId));
             permissions.add(permission);
         }
 
@@ -180,11 +181,11 @@ public class RoleService {
     public RoleDTO addPermissionToRole(Long roleId, Long permissionId, HttpServletRequest request) {
         // Find role
         Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + roleId));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + roleId));
 
         // Find permission
         Permission permission = permissionRepository.findById(permissionId)
-                .orElseThrow(() -> new RuntimeException("Permission not found with id: " + permissionId));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + permissionId));
 
         // Add permission to role
         role.addPermission(permission);
@@ -204,11 +205,11 @@ public class RoleService {
     public RoleDTO removePermissionFromRole(Long roleId, Long permissionId, HttpServletRequest request) {
         // Find role
         Role role = roleRepository.findById(roleId)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + roleId));
+                .orElseThrow(() -> new NoSuchElementException("Role not found with id: " + roleId));
 
         // Find permission
         Permission permission = permissionRepository.findById(permissionId)
-                .orElseThrow(() -> new RuntimeException("Permission not found with id: " + permissionId));
+                .orElseThrow(() -> new NoSuchElementException("Permission not found with id: " + permissionId));
 
         // Remove permission from role
         role.removePermission(permission);

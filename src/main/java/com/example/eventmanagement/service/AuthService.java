@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 public class AuthService {
 
@@ -36,11 +38,20 @@ public class AuthService {
         this.loginLogoutHistoryService = loginLogoutHistoryService;
     }
 
+    /**
+     * Authenticate user and generate JWT token
+     * Records login attempts (success/failure) in history
+     */
     public LoginResponseDTO login(LoginRequestDTO loginRequest, HttpServletRequest request) {
 
         // Get user from database first
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NoSuchElementException("Invalid username or password"));
+
+        // Check if user account is active
+        if (!user.getActive()) {
+            throw new IllegalStateException("User account is deactivated. Please contact administrator.");
+        }
 
         try {
             // Authenticate user
@@ -86,7 +97,8 @@ public class AuthService {
                     "FAILED"
             );
 
-            throw new RuntimeException("Invalid username or password");
+            // Throw BadCredentialsException (will be caught by GlobalExceptionHandler)
+            throw new BadCredentialsException("Invalid username or password");
         }
     }
 }
